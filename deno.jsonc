@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "build": "vite build --mode prod",
-    "serve": "deno run --allow-all serve.ts",
-  },
+    "build": "deno run -A npm:vite@^7.1.11 build --mode prod",
+    "serve": "deno run --allow-all serve.ts"
+  }
 }
