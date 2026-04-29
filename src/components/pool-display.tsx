@@ -1,5 +1,4 @@
-import { useAppKitAccount } from "@reown/appkit/react";
-import { useReadContract } from "wagmi";
+import { useAccount, useReadContract } from "wagmi";
 import { stakingContract } from "../constants/contracts";
 import { useErc20Token } from "../hooks/erc20Token";
 import { useState } from "react";
@@ -42,7 +41,7 @@ const WRITE_ACTION = {
 type WriteAction = (typeof WRITE_ACTION)[keyof typeof WRITE_ACTION];
 
 export function PoolDisplay({ poolId = 0n }: PoolDisplayProps) {
-  const { address, isConnected } = useAppKitAccount();
+  const { address, isConnected } = useAccount();
   const [stakeAmount, setStakeAmount] = useState("");
   const [unstakeAmount, setUnstakeAmount] = useState("");
   const [currentWriteAction, setCurrentWriteAction] = useState<WriteAction>(WRITE_ACTION.NONE);

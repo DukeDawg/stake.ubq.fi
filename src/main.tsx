@@ -5,7 +5,7 @@ import { WagmiProvider } from "wagmi";
 import App from "./App.tsx";
 import { grid } from "./the-grid";
 import { StatusMessageProvider } from "./context/status-message.tsx";
-import { wagmiAdapter } from "./wallet/config";
+import { wagmiConfig } from "./wallet/config";
 
 const queryClient = new QueryClient();
 
@@ -22,7 +22,7 @@ if (!gridElement) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <WagmiProvider config={wagmiAdapter.wagmiConfig}>
+    <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         <StatusMessageProvider>
           <App />
