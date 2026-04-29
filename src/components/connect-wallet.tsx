@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useAppKit, useAppKitAccount, useAppKitNetwork, useDisconnect } from "@reown/appkit/react";
+import { useAccount, useChainId, useConnect, useDisconnect } from "wagmi";
 import { supportedChains } from "../wallet/config";
 import { ICONS } from "./iconography";
 import { formatWalletAddress, getChainName } from "../utils";
@@ -7,9 +7,9 @@ import { useStatusMessageDispatch } from "../context/status-message";
 import { Button } from "./button";
 
 export function ConnectWalletButton() {
-  const { open } = useAppKit();
-  const { address, isConnected, status } = useAppKitAccount();
-  const { chainId } = useAppKitNetwork();
+  const { address, isConnected, status } = useAccount();
+  const chainId = useChainId();
+  const { connect, connectors, status: connectStatus } = useConnect();
   const dispatchStatusMessage = useStatusMessageDispatch();
   const { disconnect } = useDisconnect();
 
@@ -19,15 +19,33 @@ export function ConnectWalletButton() {
 
   const disconnectWallet = async () => {
     try {
-      await disconnect();
+      disconnect();
       dispatchStatusMessage({ type: "clear" });
     } catch (error) {
       console.error("Failed to disconnect:", error);
     }
   };
 
-  const normalizedChainId = typeof chainId === "string" ? parseInt(chainId, 10) : chainId;
-  const isConnecting = status === "connecting";
+  const connectWallet = () => {
+    const connector = connectors.find((item) => item.id === "injected") ?? connectors[0];
+
+    if (!connector) {
+      dispatchStatusMessage({ type: "setError", message: "No injected wallet detected" });
+      return;
+    }
+
+    dispatchStatusMessage({ type: "clear" });
+    connect(
+      { connector },
+      {
+        onError: (error) => {
+          dispatchStatusMessage({ type: "setError", message: error.message });
+        },
+      }
+    );
+  };
+
+  const isConnecting = status === "connecting" || connectStatus === "pending";
 
   if (isConnected && address) {
     return (
@@ -37,7 +55,7 @@ export function ConnectWalletButton() {
           <span>
             {formatWalletAddress(address)} (
             {getChainName(
-              normalizedChainId,
+              chainId,
               supportedChains.map((c) => ({ id: c.id, name: c.name }))
             )}
             )
@@ -49,7 +67,7 @@ export function ConnectWalletButton() {
 
   return (
     <Button
-      onClick={() => open()}
+      onClick={connectWallet}
       className="wallet-button"
       disabled={isConnecting}
       isLoading={isConnecting}

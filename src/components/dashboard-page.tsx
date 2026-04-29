@@ -1,4 +1,4 @@
-import { useAppKitAccount, useAppKitNetwork } from "@reown/appkit/react";
+import { useAccount, useChainId } from "wagmi";
 import { ICONS } from "./iconography.tsx";
 import { PoolDisplay } from "./pool-display.tsx";
 import { ConnectWalletButton } from "./connect-wallet.tsx";
@@ -8,8 +8,8 @@ import { useStatusMessageState } from "../context/status-message.tsx";
 const LogoSpan = () => <span id="header-logo-wrapper">{ICONS.DAO_LOGO}</span>;
 
 export function DashboardPage() {
-  const { isConnected } = useAppKitAccount();
-  const { chainId } = useAppKitNetwork();
+  const { isConnected } = useAccount();
+  const chainId = useChainId();
   const { successMessage, errorMessage } = useStatusMessageState();
 
   const isUnsupportedChain = isConnected && chainId && !supportedChains.some((c) => c.id === chainId);
