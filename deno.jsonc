@@ -5,12 +5,6 @@
   },
   "deploy": {
     "org": "ubiquity-dao",
-    "install": "deno install",
-    "build": "deno task build",
-    "runtime": {
-      "type": "static",
-      "cwd": "./dist",
-      "spa": true
-    }
+    "app": "p-stake-ubq-fi"
   }
 }
