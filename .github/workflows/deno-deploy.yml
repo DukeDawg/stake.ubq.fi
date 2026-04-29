@@ -11,8 +11,14 @@ jobs:
       project: stake-ubq-fi
       deploy_platform: deno2
       entrypoint: serve.ts
+      root: .deploy-root
       install_command: deno install
-      build_command: deno task build
+      build_command: |
+        deno task build
+        rm -rf .deploy-root
+        mkdir -p .deploy-root
+        cp -R dist .deploy-root/dist
+        cp serve.ts deno.lock deno.jsonc .deploy-root/
       build_env: |
         SUPABASE_URL=$SUPABASE_URL
         SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
