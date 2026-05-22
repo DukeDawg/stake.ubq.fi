@@ -5,6 +5,26 @@
  */
 export const isLocalNode = import.meta.env.MODE === "local-node";
 export const isDenoDeployHost = (hostname: string) => hostname.endsWith(".deno.dev") || hostname.endsWith(".deno.net");
+
+export function resolveRpcUrl({
+  envRpcUrl,
+  hostname,
+  origin,
+}: {
+  envRpcUrl?: string;
+  hostname?: string;
+  origin?: string;
+}) {
+  if (envRpcUrl) {
+    return envRpcUrl;
+  }
+
+  return isDenoDeployHost(hostname ?? "") ? "https://rpc.ubq.fi" : `${origin ?? ""}/rpc`;
+}
+
 const currentLocation = globalThis.location;
-export const RPC_URL =
-  import.meta.env.VITE_RPC_URL || (isDenoDeployHost(currentLocation?.hostname ?? "") ? "https://rpc.ubq.fi" : `${currentLocation?.origin ?? ""}/rpc`);
+export const RPC_URL = resolveRpcUrl({
+  envRpcUrl: import.meta.env.VITE_RPC_URL,
+  hostname: currentLocation?.hostname,
+  origin: currentLocation?.origin,
+});
